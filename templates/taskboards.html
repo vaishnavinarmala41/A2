@@ -147,6 +147,7 @@
         </div>
 
         <script>
+            var userEmail
             // Sample data for taskboards
             const taskboards = [
                 { id: 1, title: "Project Alpha", taskCount: 12, status: "In Progress" },
@@ -156,6 +157,18 @@
                 { id: 5, title: "User Research", taskCount: 9, status: "Completed" },
                 { id: 6, title: "Content Calendar", taskCount: 24, status: "Backlog" }
             ];
+
+            async function getTaskboardsOfUser() {
+                const token = getAuthTokenFromCookies(document.cookie);
+                if (token) {
+                    userEmail = decodeJWT(token).email || "User";
+                    console.log("user email ", userEmail)
+                    const taskboardresponse = await fetch(`/gettaskboards/${userEmail}`, { method: 'GET' })
+                }
+                else {
+                    document.getElementById('taskboard-container').innerHTML = "<h4 style=''>Please Login to view your taskboards</h4>"
+                }
+            }
 
             // Function to get status class
             function getStatusClass(status) {
@@ -193,7 +206,7 @@
             }
 
             // Initialize the page
-            document.addEventListener('DOMContentLoaded', renderTaskboards);
+            document.addEventListener('DOMContentLoaded', getTaskboardsOfUser);
         </script>
     </body>
 </div>

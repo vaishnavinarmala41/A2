@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request , Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -48,9 +48,10 @@ async def create_user(data: EmailRequest):
                 "email": data.email,
                 "userId": user_id
             })
-            print("User added:", data.email)
+            # print("User added:", data.email)
         else:
-            print("ℹUser already exists:")
+            # print("ℹUser already exists:")
+            pass
 
     except Exception as e:
         print("Error:", e)
@@ -60,9 +61,10 @@ async def create_user(data: EmailRequest):
 
 
 
-@app.get("/gettaskboards")
-async def get_taskboards():
+@app.get("/gettaskboards/{useremail}")
+async def get_taskboards(useremail):
     try:
-        service.display_task()
+        print("email is ",useremail)
+        userTaskboards =  service.display_task(useremail)
     except Exception as e:
         return {"Error":e}

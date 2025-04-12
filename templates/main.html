@@ -1304,6 +1304,7 @@
     <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
 
     <script>
+        var userEmail
         function openLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
         }
@@ -1359,7 +1360,7 @@
             };
 
             if (token) {
-                const userEmail = decodeJWT(token).email || "User";
+                userEmail = decodeJWT(token).email || "User";
 
                 loginLink.innerHTML = `<a class="nav-link" href="#"></a>`;
                 document.getElementById('display-email').innerHTML = `<a href="#">${userEmail}</a>`;
