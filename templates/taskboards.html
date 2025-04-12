@@ -1,0 +1,200 @@
+{% extends "main.html" %}
+
+{% block title %}Taskbaord{% endblock %}
+{% block head %}
+<style>
+    /* Reset and base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: #f9fafb;
+        color: #1f2937;
+        line-height: 1.5;
+    }
+
+    /* Container styles */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Header styles */
+    header {
+        margin-bottom: 2rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    /* Grid layout */
+    .taskboard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Card styles */
+    .taskboard-card {
+        background-color: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+
+    .taskboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .status-tag {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 500;
+    }
+
+    .status-in-progress {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-completed {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-backlog {
+        background-color: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .task-count {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+    }
+
+    .view-button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        background-color: #e6f7f5;
+        color: #0f766e;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .view-button:hover {
+        background-color: #ccf1ed;
+    }
+
+    /* Responsive styles */
+    @media (min-width: 768px) {
+        .taskboard-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        h1 {
+            font-size: 2.75rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .taskboard-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-top: 100px;">
+
+    <body>
+        <div class="container">
+            <header>
+                <h1>My Taskboards</h1>
+            </header>
+
+            <div class="taskboard-grid" id="taskboard-container">
+                <!-- Taskboard cards will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <script>
+            // Sample data for taskboards
+            const taskboards = [
+                { id: 1, title: "Project Alpha", taskCount: 12, status: "In Progress" },
+                { id: 2, title: "Marketing Campaign", taskCount: 8, status: "Completed" },
+                { id: 3, title: "Website Redesign", taskCount: 15, status: "Backlog" },
+                { id: 4, title: "Q4 Planning", taskCount: 6, status: "In Progress" },
+                { id: 5, title: "User Research", taskCount: 9, status: "Completed" },
+                { id: 6, title: "Content Calendar", taskCount: 24, status: "Backlog" }
+            ];
+
+            // Function to get status class
+            function getStatusClass(status) {
+                switch (status) {
+                    case "In Progress":
+                        return "status-in-progress";
+                    case "Completed":
+                        return "status-completed";
+                    case "Backlog":
+                        return "status-backlog";
+                    default:
+                        return "";
+                }
+            }
+
+            // Function to render taskboards
+            function renderTaskboards() {
+                const container = document.getElementById('taskboard-container');
+
+                taskboards.forEach(board => {
+                    const taskText = board.taskCount === 1 ? "task" : "tasks";
+                    const card = document.createElement('div');
+                    card.className = 'taskboard-card';
+                    card.innerHTML = `
+                <div class="card-header">
+                  <h2 class="card-title">${board.title}</h2>
+                  <span class="status-tag ${getStatusClass(board.status)}">${board.status}</span>
+                </div>
+                <p class="task-count">${board.taskCount} ${taskText}</p>
+                <button class="view-button">View Tasks</button>
+              `;
+
+                    container.appendChild(card);
+                });
+            }
+
+            // Initialize the page
+            document.addEventListener('DOMContentLoaded', renderTaskboards);
+        </script>
+    </body>
+</div>
+{% endblock %}

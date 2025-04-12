@@ -1,0 +1,200 @@
+{% extends "main.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Collaborate. Organize. Achieve.</h1>
+                <p>TaskBoard is a collaborative task management system that helps teams organize work, track progress,
+                    and achieve goals together.</p>
+                <button class="cta-button" id="cta-button">Get Started</button>
+            </div>
+            <!-- <div class="hero-image">
+                <img src="" alt="TaskBoard Dashboard Preview">
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-columns"></i>
+                    </div>
+                    <h3>Create & Manage Boards</h3>
+                    <p>Organize your tasks into customizable boards for different projects or workflows.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Invite Collaborators</h3>
+                    <p>Share your boards with team members and work together in real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>Assign & Track Tasks</h3>
+                    <p>Assign tasks to team members and track progress from start to finish.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Mark Tasks Complete</h3>
+                    <p>Celebrate achievements by marking tasks complete as you progress.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Creator-Only Deletion</h3>
+                    <p>Maintain control with creator-only board deletion privileges.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Analytics</h3>
+                    <p>Visualize your team's productivity with built-in analytics.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Preview Section -->
+    <section id="about" class="app-preview">
+        <div class="container">
+            <h2 class="section-title">See TaskBoard in Action</h2>
+            <div class="preview-content">
+                <div class="preview-text">
+                    <h3>Intuitive Interface</h3>
+                    <p>TaskBoard's clean and intuitive interface makes task management a breeze. Drag and drop tasks,
+                        add comments, attach files, and more.</p>
+                    <ul class="preview-features">
+                        <li><i class="fas fa-check"></i> Drag & drop interface</li>
+                        <li><i class="fas fa-check"></i> Real-time updates</li>
+                        <li><i class="fas fa-check"></i> File attachments</li>
+                        <li><i class="fas fa-check"></i> Task comments & discussions</li>
+                        <li><i class="fas fa-check"></i> Due date reminders</li>
+                    </ul>
+                </div>
+                <div class="preview-image">
+                    <img src="" alt="TaskBoard Interface">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get in Touch</h2>
+            <div class="contact-content">
+                <div class="contact-form">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" placeholder="Your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" placeholder="Your message"></textarea>
+                        </div>
+                        <button type="submit" class="submit-button">Send Message</button>
+                    </form>
+                </div>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>info@taskboard.com</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>123 Productivity St, San Francisco, CA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>TaskBoard</h2>
+                    <p>Collaborate. Organize. Achieve.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Connect With Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TaskBoard. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Get Started with TaskBoard</h2>
+            <p>Create your account to start organizing tasks and collaborating with your team.</p>
+            <form class="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password">
+                </div>
+                <button type="submit" class="signup-button">Create Account</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
