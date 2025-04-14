@@ -1,4 +1,7 @@
 from google.cloud import firestore
+from fastapi import HTTPException
+
+
 database = firestore.Client()
 
 
@@ -52,5 +55,29 @@ def search_name(name):
         
 
 
+def update_taskboard(taskboard,boardId):
+    try:   
+        database.collection("taskboards").document(boardId).update(taskboard.dict())
+    except Exception as e:
+        print("error ",e)
+        return {"Error": e}
 
+def verify_taskboard_name(baord_name):
+    print("board name ",baord_name)
+    try:
+        team_name_exist = database.collection('taskboards').where('name', '==', baord_name.name).limit(1).get()
+
+        if team_name_exist:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print("An error occurred:", e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+  
+
+    
+    
 

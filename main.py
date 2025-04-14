@@ -39,6 +39,9 @@ class Taskboard(BaseModel):
     tasks:Optional[List[Task]] = []
     collaborators:List[str]
 
+class BoardName(BaseModel):
+    name:str
+
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -144,3 +147,20 @@ async def get_all_users(request:Request):
     users = [doc.to_dict() for doc in users_ref.stream()]
     print("users inside main ",users)
     return {"users": users}
+
+
+#update
+@app.put("/updateTaskboard/{boardId}")
+async def edit_taskboard(taskboard: Taskboard,boardId):
+    print("updating task baord")
+    taskboard_update = service.update_taskboard(taskboard,boardId) 
+    print("updated")
+    return {"board_updated":True}
+
+
+#Verify board name
+@app.post("/verifyBoardNameExist")
+async def verify_taskboard_name(name: BoardName):
+    print("updating task baord ",name)
+    taskboard_name = service.verify_taskboard_name(name) 
+    return {"boardNameExist":taskboard_name}

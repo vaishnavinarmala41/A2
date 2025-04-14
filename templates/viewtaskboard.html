@@ -547,6 +547,19 @@
         //     window.location.href = "/";
         // });
 
+        async function checkBoardName(boardName) {
+            console.log("checking board name ", boardName)
+            const boardNameResponse = await fetch("/verifyBoardNameExist", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: boardName })
+            })
+            const boardNameExist = await boardNameResponse.json()
+            // console.log("booardName resoinse ", boardNameExist)
+            return boardNameExist?.boardNameExist
+        }
 
         // Initialize the app
         async function init() {
@@ -665,6 +678,8 @@
             if (userEmailDecoded != board.admin) {
                 addTeamMemberSection.classList.add('hidden')
                 editBoardNameBtn.classList.add('hidden')
+                sidebarShowTeamBtn.classList.add('hidden')
+                showTeamModalBtn.classList.add('hidden')
             }
             // console.log("board is ", board)
             // Render team members
@@ -791,8 +806,8 @@
 
                 // Update tasks that were assigned to this collaborator
                 board.tasks?.forEach(task => {
-                    if (task.assigned_to?.includes(email)) {
-                        task.assigned_to = task.assigned_to?.filter(e => e !== email);
+                    if (task.users?.includes(email)) {
+                        task.users = task.users?.filter(e => e !== email);
                     }
                 });
 
@@ -878,7 +893,7 @@
             }
 
             board.tasks?.forEach((task, index) => {
-                const isUnassigned = !task.assigned_to || task.assigned_to?.length === 0;
+                const isUnassigned = !task.users || task.users?.length === 0;
                 const isCompleted = task.status === 'completed';
 
                 // Determine which column to add the task to
@@ -899,16 +914,16 @@
                 let assigneeEmail = '';
                 let assigneeInitials = '';
                 if (!isUnassigned) {
-                    assigneeEmail = task.assigned_to[0]; // Display the first assignee
+                    assigneeEmail = task.users[0]; // Display the first assignee
                     assigneeInitials = getInitials(assigneeEmail);
                 }
 
                 // Format due date
-                const dueDateFormatted = task.due_date ? formatDate(task.due_date) : 'No due date';
+                const dueDateFormatted = task.pendingDate ? formatDate(task.pendingDate) : 'No due date';
 
                 taskCard.innerHTML = `
                     <div class="flex justify-between items-start mb-3">
-                        <h4 class="font-medium text-gray-900 ${isCompleted ? 'line-through text-gray-500' : ''}">${task.title}</h4>
+                        <h4 class="font-medium text-gray-900 ${isCompleted ? 'line-through text-gray-500' : ''}">${task.name}</h4>
                         <button class="edit-task text-gray-400 hover:text-gray-600" data-index="${index}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
@@ -949,10 +964,11 @@
         // Edit task
         function editTask(index) {
             const task = board.tasks[index];
+            console.log("edit task ", task)
             if (task) {
                 taskModalTitle.textContent = 'Edit Task';
                 editTaskIdInput.value = index;
-                taskTitleInput.value = task.title;
+                taskTitleInput.value = task.name;
 
                 // Set status
                 if (task.status === 'completed') {
@@ -966,9 +982,9 @@
                     completionDateContainer.classList.add('hidden');
                 }
 
-                taskDueDateInput.value = task.due_date || '';
-                taskAssigneeSelect.value = task.assigned_to && task.assigned_to?.length > 0 ? task.assigned_to[0] : '';
-                taskCompletionDateInput.value = task.completed_date || '';
+                taskDueDateInput.value = task.pendingDate || '';
+                taskAssigneeSelect.value = task.users && task.users?.length > 0 ? task.users[0] : '';
+                taskCompletionDateInput.value = task.finishedDate || '';
 
                 // Show delete button for existing tasks
                 deleteTaskBtn.classList.remove('hidden');
@@ -988,7 +1004,13 @@
 
                     // TODO: API call to delete task
                     // await deleteTaskAPI(index);
-
+                    const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(board)
+                    })
                     renderTasks();
                     updateTaskCounters();
                     taskModal.classList.add('hidden');
@@ -1053,11 +1075,17 @@
             const email = newTeamMemberSelect.value;
             if (email) {
                 try {
-                    // Add member to board
+
                     board.collaborators.push(email);
 
-                    // TODO: API call to update board members
-                    // await updateBoardMembers();
+
+                    const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(board)
+                    })
 
                     // Update UI
                     renderTeamMembers();
@@ -1086,13 +1114,25 @@
             const newName = boardNameInput.value.trim();
             if (newName) {
                 try {
-                    board.name = newName;
+                    const boardNameExist = await checkBoardName(newName)
+                    console.log("checking baord name ", boardNameExist)
 
-                    // TODO: API call to update board name
-                    // await updateBoardName();
+                    if (boardNameExist) {
+                        alert("Board name already exist")
+                    }
+                    else {
+                        board.name = newName;
+                        const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(board)
+                        })
+                        boardNameEl.textContent = newName;
+                        editNameModal.classList.add('hidden');
+                    }
 
-                    boardNameEl.textContent = newName;
-                    editNameModal.classList.add('hidden');
                 } catch (error) {
                     console.error("Error updating board name:", error);
                     alert("Failed to update board name. Please try again.");
@@ -1164,29 +1204,45 @@
                         const taskIndex = parseInt(editId);
 
                         if (taskIndex >= 0 && taskIndex < board.tasks?.length) {
-                            board.tasks[taskIndex].title = title;
+                            board.tasks[taskIndex].name = title;
                             board.tasks[taskIndex].status = status;
-                            board.tasks[taskIndex].due_date = dueDate;
-                            board.tasks[taskIndex].assigned_to = assignee ? [assignee] : [];
-                            board.tasks[taskIndex].completed_date = completionDate;
+                            board.tasks[taskIndex].pendingDate = dueDate;
+                            board.tasks[taskIndex].users = assignee ? [assignee] : [];
+                            board.tasks[taskIndex].finishedDate = completionDate;
 
+                            console.log("updated task ", board)
                             // TODO: API call to update task
                             // await updateTask(taskIndex);
+
+                            const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(board)
+                            })
                         }
                     } else {
                         // Add new task
                         const newTask = {
-                            title: title,
+                            name: title,
                             status: status,
-                            due_date: dueDate,
-                            assigned_to: assignee ? [assignee] : [],
-                            completed_date: completionDate
+                            pendingDate: dueDate,
+                            users: assignee ? [assignee] : [],
+                            finishedDate: completionDate
                         };
-
+                        console.log("nee task ", newTask)
                         board.tasks.push(newTask);
 
                         // TODO: API call to add task
                         // await addTask(newTask);
+                        const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(board)
+                        })
                     }
 
                     renderTasks();
