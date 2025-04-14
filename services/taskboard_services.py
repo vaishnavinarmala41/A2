@@ -100,9 +100,7 @@ def verify_task_name(data):
 
     return {"TaskNameExist":False}
 
-
-  
-
-    
-    
-
+def delete_taskboard(data):
+    print("data is ",data)
+    database.collection("taskboards").document(data.boardId).delete()
+    return {"board_deleted": True}

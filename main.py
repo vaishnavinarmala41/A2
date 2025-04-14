@@ -46,6 +46,9 @@ class TaskName(BaseModel):
     name:str
     boardId:str
 
+class BoardIDRequest(BaseModel):
+    boardId:str
+
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -176,3 +179,11 @@ async def verify_taskboard_name(data: TaskName):
     task_name = service.verify_task_name(data) 
     print("task name ",task_name)
     return {"TaskNameExist":task_name}
+
+#Delete Task Board
+@app.delete("/deleteTaskBoards")
+async def delete_taskboard(data: BoardIDRequest):
+    print("deleting task baord ",data)
+    board_deleted = service.delete_taskboard(data) 
+    print("task name ",board_deleted)
+    return {"BoardDeleted":board_deleted}
