@@ -24,7 +24,6 @@
 </head>
 
 <body class="bg-gray-50 min-h-screen">
-    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-80 z-50 flex items-center justify-center">
         <div class="flex flex-col items-center">
             <div class="w-16 h-16 border-t-4 border-purple-600 border-solid rounded-full animate-spin mb-4"></div>
@@ -32,7 +31,6 @@
         </div>
     </div>
 
-    <!-- Error Modal -->
     <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-lg p-8 max-w-md w-full">
             <div class="flex items-center mb-6">
@@ -53,9 +51,7 @@
         </div>
     </div>
 
-    <!-- Main Layout -->
     <div class="flex h-screen overflow-hidden" id="app-container">
-        <!-- Sidebar -->
         <div class="hidden md:flex md:flex-shrink-0">
             <div class="flex flex-col w-64 bg-purple-900 text-white">
                 <div class="flex items-center justify-center h-16 border-b border-purple-800">
@@ -102,7 +98,6 @@
                             My Taskboards
                         </h2>
                         <div id="sidebar-taskboards" class="space-y-2">
-                            <!-- Taskboards will be added here -->
                             <div class="animate-pulse flex space-x-2 items-center">
                                 <div class="h-3 w-3 bg-purple-300 rounded-full"></div>
                                 <div class="h-3 bg-purple-300 rounded w-3/4"></div>
@@ -139,9 +134,7 @@
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Navigation -->
             <header class="bg-white shadow-sm z-10">
                 <div class="flex items-center justify-between h-16 px-6">
                     <div class="flex items-center">
@@ -170,7 +163,6 @@
                 </div>
             </header>
 
-            <!-- Dashboard Stats -->
             <div class="bg-white border-b px-6 py-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-purple-50 rounded-lg p-4 flex items-center">
@@ -202,13 +194,10 @@
                 </div>
             </div>
 
-            <!-- Taskboards Grid -->
             <div class="flex-1 overflow-auto p-6 bg-gray-50">
-                <!-- Boards You Created Section -->
                 <div class="mb-8">
                     <h3 class="text-lg font-medium text-gray-800 mb-4">Boards You Created</h3>
                     <div id="created-taskboards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Created taskboards will be added here -->
                         <div class="animate-pulse">
                             <div class="bg-white rounded-lg shadow-sm p-6 h-48">
                                 <div class="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
@@ -226,12 +215,10 @@
                     </div>
                 </div>
 
-                <!-- Boards You're Added To Section -->
                 <div>
                     <h3 class="text-lg font-medium text-gray-800 mb-4">Boards You're Added To</h3>
                     <div id="collaborator-taskboards-container"
                         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Collaborator taskboards will be added here -->
                         <div class="animate-pulse">
                             <div class="bg-white rounded-lg shadow-sm p-6 h-48">
                                 <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
@@ -249,7 +236,6 @@
                     </div>
                 </div>
 
-                <!-- Empty State -->
                 <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12">
                     <div class="bg-purple-100 p-4 rounded-full mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-purple-600" fill="none"
@@ -270,7 +256,6 @@
         </div>
     </div>
 
-    <!-- Create Taskboard Modal -->
     <div id="create-taskboard-modal"
         class="hidden fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
@@ -284,13 +269,11 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Collaborators</label>
                     <div id="selected-collaborators" class="flex flex-wrap gap-2 mb-2">
-                        <!-- Selected collaborators will appear here -->
                     </div>
                     <div class="flex">
                         <select id="collaborator-select"
                             class="flex-1 rounded-l-md border-r-0 border-gray-300 focus:ring-purple-500 focus:border-purple-500">
                             <option value="">Select a collaborator</option>
-                            <!-- Available users will be added here -->
                         </select>
                         <button id="add-collaborator-btn"
                             class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-r-md">
@@ -311,7 +294,6 @@
         </div>
     </div>
 
-    <!-- Mobile Menu (for responsive design) -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40">
         <div class="fixed inset-0 bg-black opacity-25"></div>
         <div class="fixed inset-y-0 left-0 max-w-xs w-full bg-purple-900 text-white flex flex-col">
@@ -352,7 +334,6 @@
                         My Taskboards
                     </h2>
                     <div id="mobile-taskboards" class="space-y-2">
-                        <!-- Taskboards will be added here -->
                     </div>
                 </div>
 
@@ -372,19 +353,16 @@
     </div>
 
     <script>
-        // DOM Elements - Main UI
         const loadingOverlay = document.getElementById('loading-overlay');
         const errorModal = document.getElementById('error-modal');
         const errorMessage = document.getElementById('error-message');
         const errorCloseBtn = document.getElementById('error-close-btn');
         const appContainer = document.getElementById('app-container');
 
-        // DOM Elements - User Info
         const userAvatar = document.getElementById('user-avatar');
         const userName = document.getElementById('user-name');
         const userEmail = document.getElementById('user-email');
 
-        // DOM Elements - Taskboards
         const createdTaskboardsContainer = document.getElementById('created-taskboards-container');
         const collaboratorTaskboardsContainer = document.getElementById('collaborator-taskboards-container');
         const noCreatedBoards = document.getElementById('no-created-boards');
@@ -393,11 +371,9 @@
         const sidebarTaskboards = document.getElementById('sidebar-taskboards');
         const mobileTaskboards = document.getElementById('mobile-taskboards');
 
-        // DOM Elements - Stats
         const createdBoardsEl = document.getElementById('created-boards');
         const collaboratorBoardsEl = document.getElementById('collaborator-boards');
 
-        // DOM Elements - Create Taskboard
         const createTaskboardBtn = document.getElementById('create-taskboard-btn');
         const emptyCreateBtn = document.getElementById('empty-create-btn');
         const createTaskboardModal = document.getElementById('create-taskboard-modal');
@@ -408,31 +384,24 @@
         const saveTaskboardBtn = document.getElementById('save-taskboard');
         const cancelCreateTaskboardBtn = document.getElementById('cancel-create-taskboard');
 
-        // DOM Elements - Mobile
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const closeMobileMenuBtn = document.getElementById('close-mobile-menu');
 
-        // DOM Elements - Logout
         const logoutBtn = document.getElementById('logout-btn');
         const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
 
-        // Data storage
         let taskboards = [];
         let allUsers = [];
         let userEmailDecoded = '';
         let selectedCollaboratorsList = [];
 
-        // Initialize the app
         async function init() {
             try {
-                // Show loading state
                 showLoadingState();
 
-                // Fetch users and taskboards
                 await Promise.all([fetchUsers(), getTaskboardsOfUser()]);
 
-                // Hide loading state
                 hideLoadingState();
             } catch (error) {
                 console.error("Error initializing app:", error);
@@ -440,7 +409,6 @@
             }
         }
 
-        // Get JWT token from cookies
         function getAuthTokenFromCookies(cookies) {
             const cookieArray = cookies.split(';');
             for (let i = 0; i < cookieArray.length; i++) {
@@ -452,7 +420,6 @@
             return null;
         }
 
-        // Decode JWT token
         function decodeJWT(token) {
             try {
                 const base64Url = token.split('.')[1];
@@ -468,7 +435,6 @@
         }
 
 
-        // Fetch all users
         async function fetchUsers() {
             try {
                 const usersResponse = await fetch(`/getallusers`, { method: 'GET' });
@@ -486,7 +452,6 @@
             }
         }
 
-        // Fetch taskboards of user
         async function getTaskboardsOfUser() {
             const token = getAuthTokenFromCookies(document.cookie);
             if (token) {
@@ -506,22 +471,16 @@
             }
         }
 
-        // Render content
         function renderContent() {
-            // Update user info
             updateUserInfo();
 
-            // Render taskboards
             renderTaskboards();
 
-            // Update stats
             updateStats();
 
-            // Populate collaborator select
             populateCollaboratorSelect();
         }
 
-        // Update user info
         function updateUserInfo() {
             if (userEmailDecoded) {
                 const initials = userEmailDecoded.substring(0, 2).toUpperCase();
@@ -531,30 +490,24 @@
             }
         }
 
-        // Render taskboards
         function renderTaskboards() {
-            // Clear existing taskboards
             createdTaskboardsContainer.innerHTML = '';
             collaboratorTaskboardsContainer.innerHTML = '';
             sidebarTaskboards.innerHTML = '';
             mobileTaskboards.innerHTML = '';
 
             if (!taskboards || taskboards.length === 0) {
-                // Show empty state
                 emptyState.classList.remove('hidden');
                 noCreatedBoards.classList.remove('hidden');
                 noCollaboratorBoards.classList.remove('hidden');
                 return;
             }
 
-            // Hide empty state
             emptyState.classList.add('hidden');
 
-            // Split taskboards into created and collaborator
             const createdBoards = taskboards.filter(board => board.admin === userEmailDecoded);
             const collaboratorBoards = taskboards.filter(board => board.admin !== userEmailDecoded);
 
-            // Show/hide empty section messages
             if (createdBoards.length === 0) {
                 noCreatedBoards.classList.remove('hidden');
             } else {
@@ -567,15 +520,11 @@
                 noCollaboratorBoards.classList.add('hidden');
             }
 
-            // Render created boards
             createdBoards.forEach(renderTaskboardCard(createdTaskboardsContainer));
 
-            // Render collaborator boards
             collaboratorBoards.forEach(renderTaskboardCard(collaboratorTaskboardsContainer));
 
-            // Render all boards in sidebar
             taskboards.forEach(board => {
-                // Create sidebar taskboard item
                 console.log("board ", board)
                 const sidebarItem = document.createElement('div');
                 sidebarItem.className = 'group';
@@ -605,12 +554,10 @@
 
                 sidebarTaskboards.appendChild(sidebarItem);
 
-                // Create mobile taskboard item (copy of sidebar)
                 const mobileItem = sidebarItem.cloneNode(true);
                 mobileTaskboards.appendChild(mobileItem);
             });
 
-            // Add dropdown toggle event listeners
             document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
                 toggle.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -619,14 +566,12 @@
                 });
             });
 
-            // Close dropdowns when clicking outside
             document.addEventListener('click', () => {
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     menu.classList.add('hidden');
                 });
             });
 
-            // Add event listeners for manage team and delete board
             document.querySelectorAll('.manage-team').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -646,19 +591,15 @@
             });
         }
 
-        // Render taskboard card factory function
         function renderTaskboardCard(container) {
             return function (taskboard) {
-                // Create taskboard card
                 const taskboardCard = document.createElement('div');
                 taskboardCard.className = 'taskboard-card bg-white rounded-lg shadow-sm overflow-hidden';
 
-                // Calculate task stats
                 const totalTasks = taskboard.tasks ? taskboard.tasks.length : 0;
                 const completedTasks = taskboard.tasks ? taskboard.tasks.filter(task => task.status === 'completed').length : 0;
                 const activeTasks = totalTasks - completedTasks;
 
-                // Determine if user is creator
                 const isCreator = taskboard.admin === userEmailDecoded;
                 console.log("task board ", taskboard)
                 taskboardCard.innerHTML = `
@@ -724,7 +665,6 @@
             };
         }
 
-        // Update stats
         function updateStats() {
             if (!taskboards) return;
 
@@ -735,11 +675,9 @@
             collaboratorBoardsEl.textContent = collaboratorBoards;
         }
 
-        // Populate collaborator select
         function populateCollaboratorSelect() {
             collaboratorSelect.innerHTML = '<option value="">Select a collaborator</option>';
 
-            // Filter out current user
             const availableUsers = allUsers.filter(user =>
                 user.email !== userEmailDecoded && !selectedCollaboratorsList.includes(user.email)
             );
@@ -752,13 +690,11 @@
             });
         }
 
-        // Add collaborator
         function addCollaborator() {
             const email = collaboratorSelect.value;
             if (email && !selectedCollaboratorsList.includes(email)) {
                 selectedCollaboratorsList.push(email);
 
-                // Create collaborator tag
                 const tag = document.createElement('div');
                 tag.className = 'bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-sm flex items-center';
                 tag.innerHTML = `
@@ -772,7 +708,6 @@
 
                 selectedCollaborators.appendChild(tag);
 
-                // Add event listener for remove button
                 tag.querySelector('.remove-collaborator').addEventListener('click', (e) => {
                     const emailToRemove = e.currentTarget.dataset.email;
                     selectedCollaboratorsList = selectedCollaboratorsList.filter(e => e !== emailToRemove);
@@ -780,22 +715,16 @@
                     populateCollaboratorSelect();
                 });
 
-                // Reset select
                 collaboratorSelect.value = '';
                 populateCollaboratorSelect();
             }
         }
 
-        // Delete taskboard
         async function deleteTaskboard(boardId) {
             try {
-                // TODO: API call to delete taskboard
-                // await deleteTaskboardAPI(boardId);
 
-                // For demo purposes, remove from array
                 taskboards = taskboards.filter(board => board.boardId !== boardId);
 
-                // Update UI
                 renderContent();
             } catch (error) {
                 console.error("Error deleting taskboard:", error);
@@ -803,19 +732,16 @@
             }
         }
 
-        // Show loading state
         function showLoadingState() {
             loadingOverlay.classList.remove('hidden');
             appContainer.classList.add('opacity-50', 'pointer-events-none');
         }
 
-        // Hide loading state
         function hideLoadingState() {
             loadingOverlay.classList.add('hidden');
             appContainer.classList.remove('opacity-50', 'pointer-events-none');
         }
 
-        // Show error state
         function showErrorState(message, details) {
             loadingOverlay.classList.add('hidden');
             errorModal.classList.remove('hidden');
@@ -823,15 +749,12 @@
             errorMessage.textContent = details || "Please try again later";
         }
 
-        // Event Listeners
 
-        // Error modal
         errorCloseBtn.addEventListener('click', () => {
             errorModal.classList.add('hidden');
-            init(); // Try again
+            init();
         });
 
-        // Mobile menu
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.remove('hidden');
         });
@@ -840,7 +763,6 @@
             mobileMenu.classList.add('hidden');
         });
 
-        // Create taskboard
         createTaskboardBtn.addEventListener('click', () => {
             createTaskboardModal.classList.remove('hidden');
             taskboardNameInput.focus();
@@ -860,22 +782,16 @@
             populateCollaboratorSelect();
         });
 
-        // Add collaborator
         addCollaboratorBtn.addEventListener('click', addCollaborator);
 
-        // Save taskboard
         saveTaskboardBtn.addEventListener('click', async () => {
             const name = taskboardNameInput.value.trim();
 
             if (name) {
                 try {
-                    // TODO: API call to create taskboard
-                    // await createTaskboard(name, selectedCollaboratorsList);
-
-                    // For demo purposes, add a new taskboard to the array
 
                     const newTaskboard = {
-                        boardId: Date.now().toString(), // Use timestamp as ID
+                        boardId: Date.now().toString(),
                         name: name,
                         admin: userEmailDecoded,
                         collaborators: [userEmailDecoded, ...selectedCollaboratorsList],
@@ -898,11 +814,9 @@
 
                         if (taskBoardResponse.status === 200) {
                             taskboards.push(newTaskboard);
-                            // Update UI
                             renderContent();
                             createTaskboardModal.classList.add('hidden');
 
-                            // Reset form
                             taskboardNameInput.value = '';
                             selectedCollaboratorsList = [];
                             selectedCollaborators.innerHTML = '';
@@ -932,28 +846,22 @@
                 body: JSON.stringify({ name: boardName })
             })
             const boardNameExist = await boardNameResponse.json()
-            // console.log("booardName resoinse ", boardNameExist)
             return boardNameExist?.boardNameExist
         }
 
-        // Logout
         logoutBtn.addEventListener('click', () => {
-            // Clear cookies and redirect to login page
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.href = "/";
         });
 
         mobileLogoutBtn.addEventListener('click', () => {
-            // Clear cookies and redirect to login page
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.href = "/";
         });
 
-        // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === createTaskboardModal) {
                 createTaskboardModal.classList.add('hidden');
-                // Reset form
                 taskboardNameInput.value = '';
                 selectedCollaboratorsList = [];
                 selectedCollaborators.innerHTML = '';
@@ -964,7 +872,6 @@
             }
         });
 
-        // Initialize the app
         init();
     </script>
 </body>

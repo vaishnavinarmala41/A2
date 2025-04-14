@@ -7,8 +7,6 @@ import {
   signOut,
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-// Load environment variables from the .env file
-// Note: For client-side code, you'll need to process this during build time
 const firebaseConfig = {
   apiKey: "AIzaSyDbv3tBT6EHNkJcbo0zGH0O8mOw1E1mr-M",
   authDomain: "assigment-2-52b56.firebaseapp.com",
