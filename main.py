@@ -59,19 +59,12 @@ async def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
  
 @app.get("/taskboards", response_class=HTMLResponse)
-async def about(request: Request):
+async def taskbaords(request: Request):
     return templates.TemplateResponse("taskboards.html", {"request": request})
 
-@app.get("/test2", response_class=HTMLResponse)
-async def about(request: Request):
-    return templates.TemplateResponse("test2.html", {"request": request})
- 
-@app.get("/test3", response_class=HTMLResponse)
-async def about(request: Request):
-    return templates.TemplateResponse("test3.html", {"request": request})
  
 @app.get("/viewtaskboard/{boardID}", response_class=HTMLResponse)
-async def about(request: Request):
+async def viewtaskboard(request: Request):
     return templates.TemplateResponse("viewtaskboard.html", {"request": request})
  
  #Checks if user exist if not exist then creates one 
@@ -174,7 +167,7 @@ async def verify_taskboard_name(name: BoardName):
 
 #Verify task name
 @app.post("/verifyTaskNameExist")
-async def verify_taskboard_name(data: TaskName):
+async def verify_task_name(data: TaskName):
     print("updating task baord ",data)
     task_name = service.verify_task_name(data) 
     print("task name ",task_name)

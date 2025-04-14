@@ -65,9 +65,9 @@ def update_taskboard(taskboard,boardId):
 def verify_taskboard_name(baord_name):
     print("board name ",baord_name)
     try:
-        team_name_exist = database.collection('taskboards').where('name', '==', baord_name.name).limit(1).get()
+        board_name_exist = database.collection('taskboards').where('name', '==', baord_name.name).limit(1).get()
 
-        if team_name_exist:
+        if board_name_exist:
             return True
         else:
             return False
