@@ -881,32 +881,38 @@
                         collaborators: [userEmailDecoded, ...selectedCollaboratorsList],
                     };
 
-                    // console.log("new task baord ", newTaskboard, selectedCollaboratorsList)
-                    const taskBoardResponse = await fetch("/taskboard/submit", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(newTaskboard)
-                    });
+                    const boardNameExist = await checkBoardName(name)
 
-                    console.log("task board response", taskBoardResponse);
-
-                    if (taskBoardResponse.status === 200) {
-                        taskboards.push(newTaskboard);
-                        // Update UI
-                        renderContent();
-                        createTaskboardModal.classList.add('hidden');
-
-                        // Reset form
-                        taskboardNameInput.value = '';
-                        selectedCollaboratorsList = [];
-                        selectedCollaborators.innerHTML = '';
-                        populateCollaboratorSelect();
-                    } else {
-                        const responseData = await taskBoardResponse.json();
-                        alert(responseData?.message || "Board already exist please create using different name.");
+                    if (boardNameExist) {
+                        alert("Board name already exist")
                     }
+                    else {
+
+                        const taskBoardResponse = await fetch("/taskboard/submit", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(newTaskboard)
+                        });
+
+                        if (taskBoardResponse.status === 200) {
+                            taskboards.push(newTaskboard);
+                            // Update UI
+                            renderContent();
+                            createTaskboardModal.classList.add('hidden');
+
+                            // Reset form
+                            taskboardNameInput.value = '';
+                            selectedCollaboratorsList = [];
+                            selectedCollaborators.innerHTML = '';
+                            populateCollaboratorSelect();
+                        } else {
+                            const responseData = await taskBoardResponse.json();
+                            alert(responseData?.message || "Board already exist please create using different name.");
+                        }
+                    }
+
 
                 } catch (error) {
                     console.error("Error creating taskboard:", error);
@@ -914,6 +920,21 @@
                 }
             }
         });
+
+
+        async function checkBoardName(boardName) {
+            console.log("checking board name ", boardName)
+            const boardNameResponse = await fetch("/verifyBoardNameExist", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: boardName })
+            })
+            const boardNameExist = await boardNameResponse.json()
+            // console.log("booardName resoinse ", boardNameExist)
+            return boardNameExist?.boardNameExist
+        }
 
         // Logout
         logoutBtn.addEventListener('click', () => {

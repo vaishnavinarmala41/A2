@@ -77,6 +77,31 @@ def verify_taskboard_name(baord_name):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
   
+def verify_task_name(data):
+    print("board name ",data)
+    try:
+        task_board_doc = database.collection('taskboards').document(data.boardId).get()
+
+        if not task_board_doc.exists:
+            raise HTTPException(status_code=404, detail="Task board not found")
+
+        task_board_data = task_board_doc.to_dict()
+
+        for task in task_board_data.get("tasks", []):
+            if task.get("name", "").lower() == data.name.lower():
+                # raise HTTPException(status_code=400, detail="Task with the same name already exists in this task board")
+                return {"TaskNameExist":True}
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print("An error occurred:", e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+    return {"TaskNameExist":False}
+
+
+  
 
     
     

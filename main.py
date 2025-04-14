@@ -42,6 +42,10 @@ class Taskboard(BaseModel):
 class BoardName(BaseModel):
     name:str
 
+class TaskName(BaseModel):
+    name:str
+    boardId:str
+
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -164,3 +168,11 @@ async def verify_taskboard_name(name: BoardName):
     print("updating task baord ",name)
     taskboard_name = service.verify_taskboard_name(name) 
     return {"boardNameExist":taskboard_name}
+
+#Verify task name
+@app.post("/verifyTaskNameExist")
+async def verify_taskboard_name(data: TaskName):
+    print("updating task baord ",data)
+    task_name = service.verify_task_name(data) 
+    print("task name ",task_name)
+    return {"TaskNameExist":task_name}

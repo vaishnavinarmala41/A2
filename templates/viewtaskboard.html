@@ -366,11 +366,13 @@
                         </select>
                     </div>
                     <div id="completion-date-container" class="hidden">
-                        <label for="task-completion-date"
-                            class="block text-sm font-medium text-gray-700 mb-1">Completion Date</label>
-                        <input type="date" id="task-completion-date"
+                        <label for="task-completion-date" class="block text-sm font-medium text-gray-700 mb-1">
+                            Completion Date & Time
+                        </label>
+                        <input type="datetime-local" id="task-completion-date"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                     </div>
+
                 </div>
             </div>
             <div class="px-6 py-4 border-t bg-gray-50 rounded-b-lg">
@@ -560,6 +562,19 @@
             // console.log("booardName resoinse ", boardNameExist)
             return boardNameExist?.boardNameExist
         }
+        async function checkTaskTitle(boardName, boardId) {
+            console.log("checking board name ", boardName)
+            const taskNameResponse = await fetch("/verifyTaskNameExist", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: boardName, boardId: boardId })
+            })
+            const taskNameExist = await taskNameResponse.json()
+            // console.log("booardName resoinse ", boardNameExist)
+            return taskNameExist?.TaskNameExist
+        }
 
         // Initialize the app
         async function init() {
@@ -570,6 +585,7 @@
                 // Fetch users and task board data
                 await Promise.all([fetchUsers(), fetchTaskBoard(), fetchLoginUser()]);
 
+                await Promise.all([authenticateUser()])
                 // Update UI with fetched data
                 updateUI();
 
@@ -589,6 +605,13 @@
             else {
                 window.location.href = "/";
 
+            }
+        }
+
+        function authenticateUser() {
+            console.log("user email ", userEmailDecoded, board)
+            if (!board.collaborators.includes(userEmailDecoded)) {
+                window.location.href = "/taskboards";
             }
         }
 
@@ -814,9 +837,13 @@
                 // Remove the team member
                 board.collaborators = board.collaborators?.filter(e => e !== email);
 
-                // TODO: API call to update board members and tasks
-                // await updateBoardMembers();
-                // await updateTasks();
+                const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(board)
+                })
 
                 // Update UI
                 renderTeamMembers();
@@ -858,12 +885,24 @@
             if (!dateString) return '';
 
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
+
+            // Check if time is not midnight (which usually means no time was set)
+            const hasTime = date.getHours() !== 0 || date.getMinutes() !== 0;
+
+            const options = {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric'
-            });
+            };
+
+            if (hasTime) {
+                options.hour = '2-digit';
+                options.minute = '2-digit';
+            }
+
+            return date.toLocaleString('en-US', options);
         }
+
 
         // Get initials from email
         function getInitials(email) {
@@ -908,7 +947,7 @@
 
                 // Create task card
                 const taskCard = document.createElement('div');
-                taskCard.className = `task-card mb-3 p-4 bg-white rounded-lg shadow-sm ${isUnassigned ? 'border-l-4 border-red-400' : ''}`;
+                taskCard.className = `task-card mb-3 p-4 bg-white rounded-lg shadow-sm ${(isUnassigned && !isCompleted) ? 'border-l-4 border-red-400' : ''}`;
 
                 // Get assignee email if assigned
                 let assigneeEmail = '';
@@ -917,10 +956,10 @@
                     assigneeEmail = task.users[0]; // Display the first assignee
                     assigneeInitials = getInitials(assigneeEmail);
                 }
-
+                console.log("finnised ", task.finishedDate)
                 // Format due date
                 const dueDateFormatted = task.pendingDate ? formatDate(task.pendingDate) : 'No due date';
-
+                const completedDateFormatted = task.finishedDate ? formatDate(task.finishedDate) : 'No finished date';
                 taskCard.innerHTML = `
                     <div class="flex justify-between items-start mb-3">
                         <h4 class="font-medium text-gray-900 ${isCompleted ? 'line-through text-gray-500' : ''}">${task.name}</h4>
@@ -935,16 +974,17 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            ${dueDateFormatted}
+                            ${isCompleted ? completedDateFormatted : dueDateFormatted}
                         </div>
+                        
                         ${assigneeEmail ? `
                         <div class="h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-800 text-xs font-medium" title="${assigneeEmail}">
                             ${assigneeInitials}
                         </div>
                         ` : `
-                        <div class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">
+                        ${isCompleted ? ` ` : ` <div class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">
                             Unassigned
-                        </div>
+                        </div>`}
                         `}
                     </div>
                 `;
@@ -1001,9 +1041,6 @@
                 if (index >= 0 && index < board.tasks?.length) {
                     // Remove the task
                     board.tasks.splice(index, 1);
-
-                    // TODO: API call to delete task
-                    // await deleteTaskAPI(index);
                     const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
                         method: 'PUT',
                         headers: {
@@ -1115,7 +1152,7 @@
             if (newName) {
                 try {
                     const boardNameExist = await checkBoardName(newName)
-                    console.log("checking baord name ", boardNameExist)
+                    // console.log("checking baord name ", boardNameExist)
 
                     if (boardNameExist) {
                         alert("Board name already exist")
@@ -1144,15 +1181,19 @@
         taskStatusSelect.addEventListener('change', () => {
             if (taskStatusSelect.value === 'completed') {
                 completionDateContainer.classList.remove('hidden');
-                // Set default completion date to today if empty
+                // Set default completion date and time to now if empty
                 if (!taskCompletionDateInput.value) {
-                    const today = new Date().toISOString().split('T')[0];
-                    taskCompletionDateInput.value = today;
+                    const now = new Date();
+                    const offset = now.getTimezoneOffset();
+                    const localTime = new Date(now.getTime() - offset * 60 * 1000); // convert to local time
+                    const formattedNow = localTime.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+                    taskCompletionDateInput.value = formattedNow;
                 }
             } else {
                 completionDateContainer.classList.add('hidden');
             }
         });
+
 
         // Task modal
         addTaskBtn.addEventListener('click', () => {
@@ -1194,15 +1235,28 @@
             const dueDate = taskDueDateInput.value;
             const assignee = taskAssigneeSelect.value;
             const completionDate = status === 'completed' ? taskCompletionDateInput.value : '';
+            const editId = editTaskIdInput.value;
+
+            let isDuplicate = false;
+
+            // Check if creating a new task OR editing and title has changed
+            if (!editId || (editId && board.tasks[editId]?.name !== title)) {
+                const checkTitle = await checkTaskTitle(title, boardId);
+                if (checkTitle.TaskNameExist) {
+                    isDuplicate = true;
+                }
+            }
+
+            if (isDuplicate) {
+                alert("Task name already exists. Please choose a different name.");
+                return;
+            }
 
             if (title) {
                 try {
-                    const editId = editTaskIdInput.value;
-
                     if (editId) {
                         // Edit existing task
                         const taskIndex = parseInt(editId);
-
                         if (taskIndex >= 0 && taskIndex < board.tasks?.length) {
                             board.tasks[taskIndex].name = title;
                             board.tasks[taskIndex].status = status;
@@ -1210,17 +1264,13 @@
                             board.tasks[taskIndex].users = assignee ? [assignee] : [];
                             board.tasks[taskIndex].finishedDate = completionDate;
 
-                            console.log("updated task ", board)
-                            // TODO: API call to update task
-                            // await updateTask(taskIndex);
-
-                            const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                            await fetch(`/updateTaskboard/${boardId}`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify(board)
-                            })
+                            });
                         }
                     } else {
                         // Add new task
@@ -1231,18 +1281,15 @@
                             users: assignee ? [assignee] : [],
                             finishedDate: completionDate
                         };
-                        console.log("nee task ", newTask)
                         board.tasks.push(newTask);
 
-                        // TODO: API call to add task
-                        // await addTask(newTask);
-                        const updatedBoardResponse = fetch(`/updateTaskboard/${boardId}`, {
+                        await fetch(`/updateTaskboard/${boardId}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify(board)
-                        })
+                        });
                     }
 
                     renderTasks();
