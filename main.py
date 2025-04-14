@@ -7,7 +7,8 @@ from google.cloud import firestore
 from services import taskboard_services as service
 from uuid import uuid4
 from typing import List, Optional
-
+from fastapi import HTTPException , status ,APIRouter
+from fastapi.responses import JSONResponse
 app = FastAPI()
 
 # Serve static files like CSS
@@ -51,9 +52,17 @@ async def about(request: Request):
 async def about(request: Request):
     return templates.TemplateResponse("taskboards.html", {"request": request})
 
-@app.get("/test", response_class=HTMLResponse)
+@app.get("/test2", response_class=HTMLResponse)
 async def about(request: Request):
-    return templates.TemplateResponse("test.html", {"request": request})
+    return templates.TemplateResponse("test2.html", {"request": request})
+ 
+@app.get("/test3", response_class=HTMLResponse)
+async def about(request: Request):
+    return templates.TemplateResponse("test3.html", {"request": request})
+ 
+@app.get("/viewtaskboard/{boardID}", response_class=HTMLResponse)
+async def about(request: Request):
+    return templates.TemplateResponse("viewtaskboard.html", {"request": request})
  
  #Checks if user exist if not exist then creates one 
 @app.post("/createnewuser")
@@ -83,7 +92,7 @@ async def create_user(data: EmailRequest):
 async def get_taskboards(useremail):
     try:
         print("email is ",useremail)
-        userTaskboards =  service.display_task(useremail)
+        userTaskboards =  service.get_user_taskboards(useremail)
         return {"usertasks":userTaskboards}
     except Exception as e:
         return {"Error":e}
@@ -92,10 +101,46 @@ async def get_taskboards(useremail):
 @app.post("/taskboard/submit")
 async def create_taskboard(taskboardData: Taskboard):
     try:
-        print("taskboard detaisl ",taskboardData)
-        return {"message": "TaskBoard created"}
+        print("taskboard details ", taskboardData)
+        
+        taskboard_name_search = service.search_name(taskboardData.name)
+        if taskboard_name_search['found']:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Task board already exists"
+            )
+        
+        taskboard_creation = service.create_taskboard(taskboardData) 
+        return JSONResponse(
+            content={"message": "TaskBoard created"},
+            status_code=status.HTTP_200_OK
+        )
+
+    except HTTPException as http_exc:
+        raise http_exc  # Already includes status and message
+
     except Exception as e:
         print("Error:", e)
-        return {"message": "Failed to add user", "error": str(e)}
+        return JSONResponse(
+            content={"message": "Failed to create task board", "error": str(e)},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
+
+@app.get("/gettaskboardusingid/{boardId}")
+async def get_taskboards(boardId):
+    try:
+        print("board id is ", boardId)
+        taskboard =  service.get_taskboard_using_boardID(boardId)
+        return {"taskboard":taskboard}
+    except Exception as e:
+        return {"Error":e}
+
+#fetch all the users
+@app.get("/getallusers")
+async def get_all_users(request:Request):
+    users_ref = database.collection("users")
+    users = [doc.to_dict() for doc in users_ref.stream()]
+    print("users inside main ",users)
+    return {"users": users}

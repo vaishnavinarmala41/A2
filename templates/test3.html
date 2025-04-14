@@ -63,7 +63,7 @@
                 </div>
                 <div class="flex flex-col flex-grow px-4 py-6">
                     <div class="flex flex-col space-y-2">
-                        <a href="/" class="flex items-center px-4 py-3 hover:bg-purple-800 rounded-lg">
+                        <a href="/taskboards" class="flex items-center px-4 py-3 hover:bg-purple-800 rounded-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -316,7 +316,7 @@
         <div class="fixed inset-0 bg-black opacity-25"></div>
         <div class="fixed inset-y-0 left-0 max-w-xs w-full bg-purple-900 text-white flex flex-col">
             <div class="flex items-center justify-between h-16 px-6 border-b border-purple-800">
-                <h1 class="text-xl font-bold">TaskBoard</h1>
+                <h1 class="text-xl font-bold">TaskFlow</h1>
                 <button id="close-mobile-menu" class="text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -467,7 +467,6 @@
             }
         }
 
-
         // Fetch all users
         async function fetchUsers() {
             try {
@@ -476,7 +475,6 @@
                     const usersData = await usersResponse.json();
                     console.log("Users data:", usersData);
                     allUsers = usersData.users || [];
-                    populateCollaboratorSelect()
                 } else {
                     throw new Error(`Failed to fetch users: ${usersResponse.statusText}`);
                 }
@@ -581,7 +579,7 @@
                 sidebarItem.className = 'group';
                 sidebarItem.innerHTML = `
                     <div class="flex items-center justify-between text-purple-200 hover:text-white px-2 py-1 rounded hover:bg-purple-800">
-                        <a href="/viewtaskboard/${board.boardId}" class="flex items-center">
+                        <a href="/individualtaskboard/${board.boardId}" class="flex items-center">
                             <span class="w-2 h-2 rounded-full ${board.admin === userEmailDecoded ? 'bg-purple-400' : 'bg-blue-400'} mr-2"></span>
                             <span class="text-sm truncate">${board.name}</span>
                         </a>
@@ -592,10 +590,9 @@
                                 </svg>
                             </button>
                             <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                                <a href="/viewtaskboard/${board.boardId}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Open Board</a>
-                               
+                                <a href="/individualtaskboard/${board.boardId}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Open Board</a>
+                                <a href="#" class="manage-team block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-id="${board.boardId}">Manage Team</a>
                                 ${board.admin === userEmailDecoded ? `
-                                 <a href="#" class="manage-team block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-id="${board.boardId}">Manage Team</a>
                                 <a href="#" class="delete-board block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" data-id="${board.boardId}">Delete Board</a>
                                 ` : ''}
                             </div>
@@ -631,7 +628,7 @@
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
                     const boardId = e.currentTarget.dataset.id;
-                    window.location.href = `/viewtaskboard/${boardId}?showTeam=true`;
+                    window.location.href = `/individualtaskboard/${boardId}?showTeam=true`;
                 });
             });
 
@@ -677,10 +674,9 @@
                                     </svg>
                                 </button>
                                 <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                                    <a href="/viewtaskboard/${taskboard.boardId}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Open Board</a>
-                                    
-                                    ${isCreator ? `
+                                    <a href="/individualtaskboard/${taskboard.boardId}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Open Board</a>
                                     <a href="#" class="manage-team block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-id="${taskboard.boardId}">Manage Team</a>
+                                    ${isCreator ? `
                                     <a href="#" class="delete-board block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" data-id="${taskboard.boardId}">Delete Board</a>
                                     ` : ''}
                                 </div>
@@ -714,7 +710,7 @@
                         </div>
                     </div>
                     <div class="px-6 py-3 bg-gray-50 border-t">
-                        <a href="/viewtaskboard/${taskboard.boardId}" class="block w-full text-center py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors">
+                        <a href="/individualtaskboard/${taskboard.boardId}" class="block w-full text-center py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors">
                             Open Board
                         </a>
                     </div>
@@ -881,33 +877,23 @@
                         collaborators: [userEmailDecoded, ...selectedCollaboratorsList],
                     };
 
-                    // console.log("new task baord ", newTaskboard, selectedCollaboratorsList)
+                    taskboards.push(newTaskboard);
                     const taskBoardResponse = await fetch("/taskboard/submit", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(newTaskboard)
-                    });
+                    })
+                    // Update UI
+                    renderContent();
+                    createTaskboardModal.classList.add('hidden');
 
-                    console.log("task board response", taskBoardResponse);
-
-                    if (taskBoardResponse.status === 200) {
-                        taskboards.push(newTaskboard);
-                        // Update UI
-                        renderContent();
-                        createTaskboardModal.classList.add('hidden');
-
-                        // Reset form
-                        taskboardNameInput.value = '';
-                        selectedCollaboratorsList = [];
-                        selectedCollaborators.innerHTML = '';
-                        populateCollaboratorSelect();
-                    } else {
-                        const responseData = await taskBoardResponse.json();
-                        alert(responseData?.message || "Board already exist please create using different name.");
-                    }
-
+                    // Reset form
+                    taskboardNameInput.value = '';
+                    selectedCollaboratorsList = [];
+                    selectedCollaborators.innerHTML = '';
+                    populateCollaboratorSelect();
                 } catch (error) {
                     console.error("Error creating taskboard:", error);
                     alert("Failed to create taskboard. Please try again.");
