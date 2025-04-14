@@ -8,11 +8,12 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
-            <div class="hero-content">
+            <div class="hero-content" style="text-align: center;">
                 <h1>Collaborate. Organize. Achieve.</h1>
-                <p>TaskBoard is a collaborative task management system that helps teams organize work, track progress,
+                <p class="" style="text-align: center;">TaskBoard is a collaborative task management system that helps
+                    teams organize work, track progress,
                     and achieve goals together.</p>
-                <button class="cta-button" id="cta-button">Get Started</button>
+                <button class="cta-button" id="cta-button" onclick="opentaskboard()">Get Started</button>
             </div>
             <!-- <div class="hero-image">
                 <img src="" alt="TaskBoard Dashboard Preview">
@@ -71,29 +72,6 @@
         </div>
     </section>
 
-    <!-- App Preview Section -->
-    <section id="about" class="app-preview">
-        <div class="container">
-            <h2 class="section-title">See TaskBoard in Action</h2>
-            <div class="preview-content">
-                <div class="preview-text">
-                    <h3>Intuitive Interface</h3>
-                    <p>TaskBoard's clean and intuitive interface makes task management a breeze. Drag and drop tasks,
-                        add comments, attach files, and more.</p>
-                    <ul class="preview-features">
-                        <li><i class="fas fa-check"></i> Drag & drop interface</li>
-                        <li><i class="fas fa-check"></i> Real-time updates</li>
-                        <li><i class="fas fa-check"></i> File attachments</li>
-                        <li><i class="fas fa-check"></i> Task comments & discussions</li>
-                        <li><i class="fas fa-check"></i> Due date reminders</li>
-                    </ul>
-                </div>
-                <div class="preview-image">
-                    <img src="" alt="TaskBoard Interface">
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Contact Section -->
     <section id="contact" class="contact">
@@ -138,30 +116,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <h2>TaskBoard</h2>
-                    <p>Collaborate. Organize. Achieve.</p>
-                </div>
-                <div class="footer-links">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-social">
-                    <h3>Connect With Us</h3>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
+
             <div class="footer-bottom">
                 <p>&copy; 2025 TaskBoard. All rights reserved.</p>
             </div>
@@ -196,5 +151,12 @@
             </form>
         </div>
     </div>
+    <script>
+        function opentaskboard() {
+            // window.location.href = "/"
+            alert("Please login toget started")
+        }
+    </script>
 </div>
+
 {% endblock %}
